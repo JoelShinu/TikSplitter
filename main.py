@@ -1,1 +1,2 @@
-# Main script 
+# Main script
+print("Hello World!")
