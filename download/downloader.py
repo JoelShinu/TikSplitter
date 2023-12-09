@@ -1,11 +1,11 @@
-import os
-from pytube import YouTube
+from pathlib import Path
 from abc import ABC, abstractmethod
+from pytube import YouTube
 
 
 class Downloader(ABC):
     def __init__(self, output_path='videos'):
-        self.output_path = output_path
+        self.output_path = Path(__file__).resolve().parent.parent / output_path
 
     @abstractmethod
     def download_video(self, url):
@@ -15,8 +15,9 @@ class Downloader(ABC):
 class YouTubeDownloader(Downloader):
     def download_video(self, url):
         try:
-            output_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', self.output_path)
-            os.makedirs(output_directory, exist_ok=True)
+            output_directory = str(self.output_path)  # Convert Path to string
+            output_directory_path = Path(output_directory)
+            output_directory_path.mkdir(parents=True, exist_ok=True)
 
             youtube = YouTube(url)
             video_stream = youtube.streams.get_highest_resolution()
