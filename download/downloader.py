@@ -25,8 +25,11 @@ class YouTubeDownloader(Downloader):
             video_stream = youtube.streams.get_highest_resolution()
 
             logging.warning(f"Downloading YouTube video: {youtube.title}")
-            video_stream.download(output_directory)
-            logging.warning("Download Complete!")
+            original_filename = video_stream.download(output_directory)
+            new_filename = original_filename.replace(" ", "_")
+            new_filepath = output_directory_path / new_filename
+            Path(original_filename).replace(new_filepath)
+            logging.warning(f"Download Complete! File saved as: {new_filename}")
 
         except Exception as e:
             logging.error(f"An error occurred while downloading YouTube video: {e}")
