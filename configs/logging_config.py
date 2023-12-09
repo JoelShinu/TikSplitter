@@ -2,7 +2,10 @@ import logging
 import os
 
 
-def configure_logging(root_folder):
+def configure_logging():
+    # Get the directory of the script or module calling this function
+    root_folder = os.path.abspath(os.path.dirname(__file__))
+
     log_folder = os.path.join(root_folder, "logs")
     os.makedirs(log_folder, exist_ok=True)
 
