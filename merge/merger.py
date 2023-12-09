@@ -5,6 +5,7 @@ import random
 from typing import List
 
 from moviepy.editor import VideoFileClip, clips_array
+from moviepy.video.fx import resize
 
 from configs.logging_config import configure_logging
 
@@ -49,7 +50,7 @@ class Merger:
 
                 # Resize sample video to match the height of the video clip
                 # TODO: resize method not currently working properly
-                sample_clip_resized = sample_clip.resize(height=video_clip.h)
+                sample_clip_resized = sample_clip.fx(resize, (100, 100))
 
                 # Combine video clip and sample clip horizontally
                 clips = clips_array(
