@@ -22,3 +22,4 @@ def get_env_details(*keys: str) -> dict[str, str | None]:
         return dotenv_values(envPath)
 
     return {key: os.getenv(key) for key in keys}
+
