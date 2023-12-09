@@ -1,2 +1,4 @@
 # Main script
-print("Hello World!")
+from utils import get_env_details
+
+print(get_env_details()["TOKEN"])
