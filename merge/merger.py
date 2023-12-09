@@ -1,6 +1,7 @@
+from moviepy.audio.fx.all import audio_fadein
 from moviepy.editor import VideoFileClip, clips_array
 from moviepy.video.fx.all import resize
-from moviepy.audio.fx.all import audio_fadein
+
 from configs.logging_config import configure_logging
 
 
@@ -34,6 +35,3 @@ class Merger:
 
         except Exception as e:
             self.logger.error(f"An error occurred: {str(e)}")
-
-
-

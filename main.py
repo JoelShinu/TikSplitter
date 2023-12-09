@@ -18,7 +18,9 @@ def main():
 
 def main2():
     VIDEO1_PATH = str(ROOT_DIR / "videos/Vikkstar_Was_Having_None_Of_It.mp4")
-    VIDEO2_PATH = str(ROOT_DIR / "videos/CHUNKZ_Reveals_The_TRUTH_About_His_WEIGHT_LOSS_Journey!.mp4")
+    VIDEO2_PATH = str(
+        ROOT_DIR / "videos/CHUNKZ_Reveals_The_TRUTH_About_His_WEIGHT_LOSS_Journey!.mp4"
+    )
     OUTPUT_PATH = str(ROOT_DIR / "merged_video.mp4")
 
     merger = Merger()
