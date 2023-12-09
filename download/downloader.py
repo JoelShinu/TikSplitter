@@ -1,21 +1,32 @@
-import os
+import logging
+from abc import ABC, abstractmethod
+from pathlib import Path
 
 from pytube import YouTube
 
 
-def download_youtube(url, output_path="videos"):
-    try:
-        output_directory = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "..", output_path
-        )
-        os.makedirs(output_directory, exist_ok=True)
+class Downloader(ABC):
+    def __init__(self, output_path):
+        self.output_path = output_path
 
-        youtube = YouTube(url)
-        video_stream = youtube.streams.get_highest_resolution()
+    @abstractmethod
+    def download_video(self, url):
+        pass
 
-        print(f"Downloading: {youtube.title}")
-        video_stream.download(output_directory)
-        print("Download Complete!")
 
-    except Exception as e:
-        print(f"An Error has occurred: {e}")
+class YouTubeDownloader(Downloader):
+    def download_video(self, url):
+        try:
+            output_directory = str(self.output_path)  # Convert Path to string
+            output_directory_path = Path(output_directory)
+            output_directory_path.mkdir(parents=True, exist_ok=True)
+
+            youtube = YouTube(url)
+            video_stream = youtube.streams.get_highest_resolution()
+
+            logging.warning(f"Downloading YouTube video: {youtube.title}")
+            video_stream.download(output_directory)
+            logging.warning("Download Complete!")
+
+        except Exception as e:
+            logging.error(f"An error occurred while downloading YouTube video: {e}")
