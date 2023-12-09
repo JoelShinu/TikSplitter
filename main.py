@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from caption import auto_caption
 from download.downloader import YouTubeDownloader
+from merge.merger import Merger
 
 ROOT_DIR = Path.cwd()
 
@@ -17,9 +17,10 @@ def main():
 
 
 def main2():
-    auto_caption.transcribe_wav(
-        "Vikkstar Was Having None Of It.wav", "transcription.txt"
-    )
+    video_folder = ROOT_DIR / "videos"
+    video_file = 'videos/Vikkstar Was Having None Of It.mp4.mp4'
+    merger = Merger()
+    merger.merge_videos(video_file)
 
 
 if __name__ == "__main__":
