@@ -30,12 +30,16 @@ def transcribe_audio(video_path):
 
 
 def auto_caption(video_file, output_file="auto_caption.txt"):
-    video_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'videos', video_file)
+    video_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "videos", video_file
+    )
     captions = transcribe_audio(video_path)
 
     if captions:
-        output_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), output_file)
-        with open(output_path, 'w') as file:
+        output_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), output_file
+        )
+        with open(output_path, "w") as file:
             file.write(captions)
         print(f"Auto-caption save to: {output_file}")
     else:
