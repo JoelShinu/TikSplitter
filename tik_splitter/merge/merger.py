@@ -13,6 +13,7 @@ class Merger:
         try:
             # Load the videos
             video1 = VideoFileClip(video1_path)
+
             video2 = VideoFileClip(video2_path)
 
             # Resize both videos to 540x960

@@ -1,5 +1,4 @@
 import logging
-from pathlib import Path
 import os
 
 
@@ -11,10 +10,6 @@ def configure_logging():
     os.makedirs(log_folder, exist_ok=True)
 
     log_file_path = os.path.join(log_folder, "app.log")
-
-
-
-
 
     logging.basicConfig(
         level=logging.INFO,
