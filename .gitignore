@@ -232,3 +232,5 @@ fabric.properties
 # Temporary files used in service
 *.mp4
 *.srt
+*.wav
+*.mp3
