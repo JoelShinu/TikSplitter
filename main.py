@@ -51,3 +51,8 @@ def main3():
 
 if __name__ == "__main__":
     main3()
+
+
+# TODO:
+https://www.reddit.com/r/moviepy/comments/12gmvxf/need_help_with_subtitles/
+IO Buffer for video and caption data
