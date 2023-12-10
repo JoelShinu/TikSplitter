@@ -7,7 +7,7 @@ from configs.logging_config import configure_logging
 
 class Merger:
     def __init__(self):
-        self.logger = configure_logging()
+        self._logger = configure_logging()
 
     def merge_videos(self, video1_path, video2_path, output_path):
         try:
@@ -31,7 +31,7 @@ class Merger:
             # Write the final video to the output path
             final_video.write_videofile(output_path, codec="libx264", audio_codec="aac")
 
-            self.logger.info(f"Videos successfully merged and saved at {output_path}")
+            self._logger.info(f"Videos successfully merged and saved at {output_path}")
 
         except Exception as e:
-            self.logger.error(f"An error occurred: {str(e)}")
+            self._logger.error(f"An error occurred: {str(e)}")
