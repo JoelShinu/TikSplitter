@@ -2,7 +2,7 @@ from moviepy.audio.fx.all import audio_fadein
 from moviepy.editor import VideoFileClip, clips_array
 from moviepy.video.fx.all import resize
 
-from configs.logging_config import configure_logging
+from tik_splitter.configs.logging_config import configure_logging
 
 
 class Merger:
@@ -13,10 +13,12 @@ class Merger:
         try:
             # Load the videos
             video1 = VideoFileClip(video1_path)
+
             video2 = VideoFileClip(video2_path)
 
             # Resize both videos to 540x960
             resized_video1 = video1.fx(resize, width=540, height=960)
+
             resized_video2 = video2.fx(resize, width=540, height=960)
 
             # Mute video2

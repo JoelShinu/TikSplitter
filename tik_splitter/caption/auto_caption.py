@@ -22,9 +22,7 @@ def transcribe_wav(audio_path, output_file):
     except sr.UnknownValueError:
         logging.warning("Speech recognition could not recognize audio")
     except sr.RequestError as e:
-        logging.warning(
-            f"Could not request results from Google Speech Recognition service: {e}"
-        )
+        logging.warning(f"Could not request results from Google Speech Recognition service: {e}")
     except sr.WaitTimeoutError:
         logging.warning("Timeout Error")
 
