@@ -9,10 +9,7 @@ class Poster:
 
     def upload(self, video: TikTokVideo) -> bool:
         failedUploads = upload_video(
-            filename=video.getFilename(),
-            description=video.getDescription(),
-            sessionid=self._sessionId,
-            headless=True
+            filename=video.getFilename(), description=video.getDescription(), sessionid=self._sessionId, headless=True
         )
 
         return len(failedUploads) == 0
