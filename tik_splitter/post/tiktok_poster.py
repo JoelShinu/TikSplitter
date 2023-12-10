@@ -1,4 +1,5 @@
 from tiktok_uploader.upload import upload_video
+
 from data.videos.tiktok_video import TikTokVideo
 
 
@@ -8,7 +9,10 @@ class Poster:
 
     def upload(self, video: TikTokVideo) -> bool:
         failedUploads = upload_video(
-            filename=video.getFilename(), description=video.getDescription(), sessionid=self._sessionId
+            filename=video.getFilename(),
+            description=video.getDescription(),
+            sessionid=self._sessionId,
+            headless=True
         )
 
         return len(failedUploads) == 0

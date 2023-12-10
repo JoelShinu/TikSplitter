@@ -1,15 +1,19 @@
 from pathlib import Path
-from youtube_transcript_api import YouTubeTranscriptApi
-from tik_splitter.configs.logging_config import configure_logging
+from typing import Iterable
 from urllib.parse import urlparse, parse_qs
+
+from pytube import Caption
+from youtube_transcript_api import YouTubeTranscriptApi
+
+from tik_splitter.configs.logging_config import configure_logging
 
 
 class AutoCaptioner:
-    def __init__(self, output_path):
+    def __init__(self, output_path: Path):
         self.output_path = Path(output_path)
         self._logging = configure_logging()
 
-    def get_captions(self, video_url):
+    def get_captions(self, video_url: str) -> Iterable[Caption] | None:
         try:
             video_id = self.extract_video_id(video_url)
             if video_id:
@@ -23,7 +27,7 @@ class AutoCaptioner:
             self._logging.error(f"An error occurred while fetching captions: {e}")
             return None
 
-    def extract_video_id(self, video_url):
+    def extract_video_id(self, video_url: str) -> str | None:
         try:
             parsed_url = urlparse(video_url)
             video_id = parse_qs(parsed_url.query).get("v", [None])[0]
@@ -37,7 +41,7 @@ class AutoCaptioner:
             self._logging.error(f"An error occurred while extracting video ID: {e}")
             return None
 
-    def save_captions_as_srt(self, captions, output_filename):
+    def save_captions_as_srt(self, captions: Iterable[Caption], output_filename: str):
         try:
             output_file_path = self.output_path / (output_filename + ".srt")
 
@@ -52,7 +56,7 @@ class AutoCaptioner:
         except Exception as e:
             self._logging.error(f"An error occurred while saving captions as SRT: {e}")
 
-    def save_captions_as_txt(self, captions, output_filename):
+    def save_captions_as_txt(self, captions: Iterable[Caption], output_filename: str):
         try:
             output_file_path = self.output_path / (output_filename + ".txt")
 
