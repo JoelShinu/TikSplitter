@@ -13,11 +13,11 @@ ROOT_DIR = Path.cwd()
 def main():
     video_folder = ROOT_DIR / "videos"
     youtube_downloader = YouTubeDownloader(video_folder)
-    youtube_video_url = "https://www.youtube.com/watch?v=rN2tC5PWJUs"
-    youtube_downloader.download_video(youtube_video_url)
+    youtube_video_url = "https://www.youtube.com/shorts/e-G3YQaY8Ow"
+    path = youtube_downloader.download_video(youtube_video_url)
 
-    video = TikTokVideo("videos/Vikkstar_Was_Having_None_Of_It.mp4", "test")
-    poster = Poster(get_env_details(f"{Account.CLIP_CHIMP}_SESSION_ID"))
+    video = TikTokVideo(str(path), "test")
+    poster = Poster(get_env_details(f"{Account.CLIP_CHIMP.value}_SESSION_ID"))
     poster.upload(video)
 
 
@@ -33,4 +33,4 @@ def main2():
 
 
 if __name__ == "__main__":
-    main2()
+    main()

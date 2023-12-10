@@ -1,21 +1,26 @@
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
+from urllib.error import URLError, HTTPError
 
 from pytube import YouTube
+from pytube.exceptions import PytubeError
 
 
 class Downloader(ABC):
-    def __init__(self, output_path):
+    def __init__(self, output_path: Path):
         self.output_path = output_path
 
     @abstractmethod
-    def download_video(self, url):
-        pass
+    def download_video(self, url: str) -> Path | None:
+        ...
 
 
 class YouTubeDownloader(Downloader):
-    def download_video(self, url):
+    def __init__(self, output_path: Path):
+        super().__init__(output_path)
+
+    def download_video(self, url: str) -> Path | None:
         try:
             output_directory = str(self.output_path)  # Convert Path to string
             output_directory_path = Path(output_directory)
@@ -31,5 +36,8 @@ class YouTubeDownloader(Downloader):
             Path(original_filename).replace(new_filepath)
             logging.warning(f"Download Complete! File saved as: {new_filename}")
 
-        except Exception as e:
+        except (URLError, HTTPError, PytubeError) as e:
             logging.error(f"An error occurred while downloading YouTube video: {e}")
+            return None
+
+        return new_filepath
