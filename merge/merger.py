@@ -17,7 +17,9 @@ class Merger:
 
             # Resize both videos to 540x960
             resized_video1 = video1.fx(resize, width=540, height=960)
-            resized_video2 = video2.fx(resize, width=540, height=960)
+
+            trimmed_video2 = video2.subclip(0, resized_video1.duration)
+            resized_video2 = trimmed_video2.fx(resize, width=540, height=960)
 
             # Mute video2
             muted_video2 = resized_video2.fx(audio_fadein, 0.01)
