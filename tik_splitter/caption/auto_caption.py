@@ -13,9 +13,7 @@ class AutoCaptioner:
         try:
             video_id = self.extract_video_id(video_url)
             if video_id:
-                captions = YouTubeTranscriptApi.get_transcript(
-                    video_id, languages=["en"]
-                )
+                captions = YouTubeTranscriptApi.get_transcript(video_id, languages=["en"])
                 return captions
             else:
                 self._logging.error("Unable to extract video ID from the YouTube URL.")
@@ -46,9 +44,7 @@ class AutoCaptioner:
             with open(output_file_path, "w", encoding="utf-8") as srt_file:
                 for i, caption in enumerate(captions, start=1):
                     srt_file.write(f"{i}\n")
-                    srt_file.write(
-                        f"{caption['start']} --> {caption['start'] + caption['duration']}\n"
-                    )
+                    srt_file.write(f"{caption['start']} --> {caption['start'] + caption['duration']}\n")
                     srt_file.write(f"{caption['text']}\n\n")
 
             self._logging.warning(f"Captions saved as SRT file: {output_file_path}")
