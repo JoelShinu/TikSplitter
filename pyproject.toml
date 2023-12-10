@@ -10,6 +10,7 @@ python = "^3.12"
 moviepy = "^1.0.3"
 pytube = "^15.0.0"
 SpeechRecognition = "^3.10.1"
+pillow = "9.5.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.11.0"
