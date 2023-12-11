@@ -44,6 +44,4 @@ class Merger:
             self._logger.error(f"An error occurred: {e}")
             return None
 
-        return Video(file_location,
-                     merged_title,
-                     video1.get_raw_description() + " " + video2.get_raw_description())
+        return Video(file_location, merged_title, video1.get_raw_description() + " " + video2.get_raw_description())
