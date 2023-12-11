@@ -3,7 +3,7 @@ from pathlib import Path
 
 from data.videos.tiktok_video import TikTokVideo
 from tik_splitter.caption.auto_caption import AutoCaptioner
-from tik_splitter.configs.utils import get_env_details
+from tik_splitter.utils.utils import get_env_details
 from tik_splitter.download.downloader import YouTubeDownloader, SampleVideoDownloader
 from tik_splitter.merge.merger import Merger
 from tik_splitter.post.account import Account

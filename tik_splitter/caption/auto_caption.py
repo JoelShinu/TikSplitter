@@ -5,7 +5,7 @@ from urllib.parse import urlparse, parse_qs
 from pytube import Caption
 from youtube_transcript_api import YouTubeTranscriptApi
 
-from tik_splitter.configs.logging_config import configure_logging
+from tik_splitter.utils.logging_config import configure_logging
 
 
 class AutoCaptioner:

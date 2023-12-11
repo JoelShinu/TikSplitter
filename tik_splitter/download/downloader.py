@@ -5,7 +5,7 @@ from urllib.error import URLError, HTTPError
 import ffmpeg
 from pytube import YouTube
 from pytube.exceptions import PytubeError
-from tik_splitter.configs.logging_config import configure_logging
+from tik_splitter.utils.logging_config import configure_logging
 
 
 class Downloader(ABC):
