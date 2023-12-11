@@ -6,13 +6,15 @@ from urllib.error import URLError, HTTPError
 from pytube import YouTube
 from pytube.exceptions import PytubeError
 
+from tik_splitter.entities.tiktok_video import TikTokVideo
+
 
 class Downloader(ABC):
     def __init__(self, output_path: Path):
         self.output_path = output_path
 
     @abstractmethod
-    def download_video(self, url: str) -> Path | None:
+    def download_video(self, url: str) -> TikTokVideo | None:
         ...
 
 
@@ -20,7 +22,7 @@ class YouTubeDownloader(Downloader):
     def __init__(self, output_path: Path):
         super().__init__(output_path)
 
-    def download_video(self, url: str) -> Path | None:
+    def download_video(self, url: str) -> TikTokVideo | None:
         try:
             output_directory = str(self.output_path)  # Convert Path to string
             output_directory_path = Path(output_directory)
@@ -40,4 +42,6 @@ class YouTubeDownloader(Downloader):
             logging.error(f"An error occurred while downloading YouTube video: {e}")
             return None
 
-        return new_filepath
+        tags = youtube.keywords
+        desc = "#fyp " + " ".join(list(map(lambda tag: "#" + str(tag).strip(), tags)))
+        return TikTokVideo(new_filepath, desc)

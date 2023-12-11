@@ -4,7 +4,6 @@ from pathlib import Path
 from tik_splitter.caption.auto_caption import AutoCaptioner
 from tik_splitter.configs.utils import get_env_details
 from tik_splitter.download.downloader import YouTubeDownloader
-from tik_splitter.entities.tiktok_video import TikTokVideo
 from tik_splitter.merge.merger import Merger
 from tik_splitter.post.account import Account
 from tik_splitter.post.tiktok_poster import Poster
@@ -16,11 +15,10 @@ def main():
     video_folder = ROOT_DIR / "data/videos"
     youtube_downloader = YouTubeDownloader(video_folder)
     youtube_video_url = "https://www.youtube.com/watch?v=yYXQkQAlMfU"
-    path = youtube_downloader.download_video(youtube_video_url)
 
-    video = TikTokVideo(path, "test")
+    video = youtube_downloader.download_video(youtube_video_url)
     poster = Poster(get_env_details(f"{Account.CLIP_CHIMP.value}_SESSION_ID"))
-    poster.upload(video)
+    poster.upload_videos(video)
 
 
 def main2():
