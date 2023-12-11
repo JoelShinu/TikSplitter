@@ -1,4 +1,5 @@
 from pathlib import Path
+from numpy import random
 from typing import Union
 
 from moviepy.audio.fx.all import audio_fadein
@@ -22,10 +23,19 @@ class Merger:
             video1 = VideoFileClip(video1_str)
             video2 = VideoFileClip(video2_str)
 
+            # Duration of videos
+            video1_duration = video1.duration
+            video2_duration = video2.duration
+
+            # Trim the beginning of video2 randomly if it's longer than video1
+            if video2_duration > video1_duration:
+                start_time = random.uniform(0, video2_duration - video1_duration)
+                trimmed_video2 = video2.subclip(start_time, start_time + video1_duration)
+            else:
+                trimmed_video2 = video2
+
             # Resize both videos to 540x960
             resized_video1 = video1.fx(resize, width=540, height=960)
-
-            trimmed_video2 = video2.subclip(0, resized_video1.duration)
             resized_video2 = trimmed_video2.fx(resize, width=540, height=960)
 
             # Mute video2
