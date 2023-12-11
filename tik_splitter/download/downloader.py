@@ -82,9 +82,13 @@ class YouTubeDownloader(Downloader):
         return None
 
 
-class SampleVideoDownloader(YouTubeDownloader):
+class SampleVideoDownloader(Downloader):
+
     def __init__(self, output_path: Path):
         super().__init__(output_path)
+
+    def download_video(self, url: str) -> Path | None:
+
 
     def download_sample_video(self, video_name: str, video_dict: dict) -> Path | None:
         if video_name in video_dict:
