@@ -24,19 +24,17 @@ def main():  # YouTube Download and TikTok Post Tester
     poster.upload(video)
 
 
-def main2():  # Merge Video Tester
-    VIDEO1_PATH = ROOT_DIR.resolve() / "data/videos/Deji_Stitches_Up_Tobi.mp4"
-    VIDEO2_PATH = ROOT_DIR / "data/videos/Callux_Gets_Violated.mp4"
-    OUTPUT_PATH = ROOT_DIR.resolve() / "data/videos/merged_video.mp4"
-    CAPTION_PATH = ROOT_DIR.resolve() / "data/captions/captions_output.srt"
+def main2():  # Download and Merge Video Tester
+    video_folder = ROOT_DIR / "data/videos"
+    merge_folder = ROOT_DIR / "data/merged/output.mp4"
+    youtube_downloader = YouTubeDownloader(video_folder)
+    youtube_video_url = "https://www.youtube.com/watch?v=Yz6rC4K-Kng"
+    videos = youtube_downloader.download_and_split_video(youtube_video_url)
+    video1 = videos[0]
+    video2 = videos[1]
 
-    def add_subtitle_to_video(input_video_file, subtitles_file, output_video_with_subtitles_file):
-        # Add subtitles to the input video
-        ffmpeg.input(str(input_video_file)).output(
-            str(output_video_with_subtitles_file), vf='subtitles=' + str(subtitles_file)
-        ).run()
-
-    add_subtitle_to_video(VIDEO1_PATH, CAPTION_PATH, OUTPUT_PATH)
+    merger = Merger()
+    merger.merge_videos(str(video1), str(video2), str(merge_folder))
 
 
 def main3():  # AutoCaptioner Tester
@@ -63,4 +61,5 @@ def main4():  # Sample Video Tester
 
 
 if __name__ == "__main__":
-    main()
+    main2()
+
