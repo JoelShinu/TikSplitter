@@ -1,19 +1,17 @@
 import logging
-from pathlib import Path
 
+from config import ROOT_DIR
 from tik_splitter.caption.auto_caption import AutoCaptioner
-from tik_splitter.configs.utils import get_env_details
-from tik_splitter.download.downloader import YouTubeDownloader
+from tik_splitter.download.downloader import VideoDownloader
 from tik_splitter.merge.merger import Merger
 from tik_splitter.post.account import Account
 from tik_splitter.post.tiktok_poster import Poster
-
-ROOT_DIR = Path.cwd()
+from tik_splitter.utils.utils import get_env_details
 
 
 def main():
     video_folder = ROOT_DIR / "data/videos"
-    youtube_downloader = YouTubeDownloader(video_folder)
+    youtube_downloader = VideoDownloader(video_folder)
     youtube_video_url = "https://www.youtube.com/watch?v=yYXQkQAlMfU"
 
     video = youtube_downloader.download_video(youtube_video_url)
@@ -22,12 +20,13 @@ def main():
 
 
 def main2():
-    VIDEO1_PATH = str(ROOT_DIR / "data/videos/Deji_Stitches_Up_Tobi.mp4")
-    VIDEO2_PATH = str(ROOT_DIR / "data/videos/Callux_Gets_Violated.mp4")
-    OUTPUT_PATH = str(ROOT_DIR / "data/videos/merged_video.mp4")
-
+    downloader = VideoDownloader()
+    vid1 = downloader.download_video("https://www.youtube.com/watch?v=yYXQkQAlMfU")
+    vid2 = downloader.download_video("https://www.youtube.com/watch?v=yYXQkQAlMfU")
     merger = Merger()
-    merger.merge_videos(VIDEO1_PATH, VIDEO2_PATH, OUTPUT_PATH)
+    vid3 = merger.merge_videos(vid1, vid2)
+    poster = Poster(get_env_details(f"{Account.CLIP_CHIMP.value}_SESSION_ID"))
+    poster.upload_videos(vid3)
 
 
 def main3():
@@ -35,7 +34,7 @@ def main3():
     VIDEO_OUTPUT_PATH = ROOT_DIR / "data/videos"
     CAPTION_OUTPUT_PATH = ROOT_DIR / "data/captions"
 
-    downloader = YouTubeDownloader(VIDEO_OUTPUT_PATH)
+    downloader = VideoDownloader(VIDEO_OUTPUT_PATH)
     downloader.download_video(VIDEO_URL)
 
     auto_captioner = AutoCaptioner(CAPTION_OUTPUT_PATH)
@@ -48,4 +47,4 @@ def main3():
 
 
 if __name__ == "__main__":
-    main()
+    main2()

@@ -5,12 +5,12 @@ from urllib.parse import urlparse, parse_qs
 from pytube import Caption
 from youtube_transcript_api import YouTubeTranscriptApi
 
-from tik_splitter.configs.logging_config import configure_logging
+from tik_splitter.utils.logging_config import configure_logging
 
 
 class AutoCaptioner:
     def __init__(self, output_path: Path):
-        self.output_path = Path(output_path)
+        self._output_path = Path(output_path)
         self._logging = configure_logging()
 
     def get_captions(self, video_url: str) -> Iterable[Caption] | None:
@@ -43,7 +43,7 @@ class AutoCaptioner:
 
     def save_captions_as_srt(self, captions: Iterable[Caption], output_filename: str):
         try:
-            output_file_path = self.output_path / (output_filename + ".srt")
+            output_file_path = self._output_path / (output_filename + ".srt")
 
             with open(output_file_path, "w", encoding="utf-8") as srt_file:
                 for i, caption in enumerate(captions, start=1):
@@ -58,7 +58,7 @@ class AutoCaptioner:
 
     def save_captions_as_txt(self, captions: Iterable[Caption], output_filename: str):
         try:
-            output_file_path = self.output_path / (output_filename + ".txt")
+            output_file_path = self._output_path / (output_filename + ".txt")
 
             with open(output_file_path, 'w', encoding='utf-8') as txt_file:
                 for i, caption in enumerate(captions, start=1):
