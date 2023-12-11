@@ -16,8 +16,8 @@ ROOT_DIR = Path.cwd()
 def main():  # YouTube Download and TikTok Post Tester
     video_folder = ROOT_DIR / "data/videos"
     youtube_downloader = YouTubeDownloader(video_folder)
-    youtube_video_url = "https://www.youtube.com/watch?v=yYXQkQAlMfU"
-    path = youtube_downloader.download_video(youtube_video_url)
+    youtube_video_url = "https://www.youtube.com/watch?v=Yz6rC4K-Kng"
+    path = youtube_downloader.download_and_split_video(youtube_video_url)
 
     video = TikTokVideo(str(path), "test")
     poster = Poster(get_env_details(f"{Account.CLIP_CHIMP.value}_SESSION_ID"))
@@ -25,12 +25,18 @@ def main():  # YouTube Download and TikTok Post Tester
 
 
 def main2():  # Merge Video Tester
-    VIDEO1_PATH = ROOT_DIR / "data/videos/Deji_Stitches_Up_Tobi.mp4"
+    VIDEO1_PATH = ROOT_DIR.resolve() / "data/videos/Deji_Stitches_Up_Tobi.mp4"
     VIDEO2_PATH = ROOT_DIR / "data/videos/Callux_Gets_Violated.mp4"
-    OUTPUT_PATH = ROOT_DIR / "data/videos/merged_video.mp4"
+    OUTPUT_PATH = ROOT_DIR.resolve() / "data/videos/merged_video.mp4"
+    CAPTION_PATH = ROOT_DIR.resolve() / "data/captions/captions_output.srt"
 
-    merger = Merger()
-    merger.merge_videos(VIDEO1_PATH, VIDEO2_PATH, OUTPUT_PATH)
+    def add_subtitle_to_video(input_video_file, subtitles_file, output_video_with_subtitles_file):
+        # Add subtitles to the input video
+        ffmpeg.input(str(input_video_file)).output(
+            str(output_video_with_subtitles_file), vf='subtitles=' + str(subtitles_file)
+        ).run()
+
+    add_subtitle_to_video(VIDEO1_PATH, CAPTION_PATH, OUTPUT_PATH)
 
 
 def main3():  # AutoCaptioner Tester
