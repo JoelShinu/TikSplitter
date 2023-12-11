@@ -1,40 +1,33 @@
 import logging
-from pathlib import Path
 
-from data.videos.tiktok_video import TikTokVideo
+from config import ROOT_DIR
 from tik_splitter.caption.auto_caption import AutoCaptioner
-from tik_splitter.utils.utils import get_env_details
-from tik_splitter.download.downloader import YouTubeDownloader, SampleVideoDownloader
+from tik_splitter.download.downloader import VideoDownloader, SampleVideoDownloader
 from tik_splitter.merge.merger import Merger
 from tik_splitter.post.account import Account
 from tik_splitter.post.tiktok_poster import Poster
+from tik_splitter.utils.utils import get_env_details
 from data.sample.sample_video_data import sample_video_dict
 
-ROOT_DIR = Path.cwd()
 
-
-def main():  # YouTube Download and TikTok Post Tester
+def main():
     video_folder = ROOT_DIR / "data/videos"
-    youtube_downloader = YouTubeDownloader(video_folder)
-    youtube_video_url = "https://www.youtube.com/watch?v=Yz6rC4K-Kng"
-    path = youtube_downloader.download_and_split_video(youtube_video_url)
+    youtube_downloader = VideoDownloader(video_folder)
+    youtube_video_url = "https://www.youtube.com/watch?v=yYXQkQAlMfU"
 
-    video = TikTokVideo(str(path), "test")
+    video = youtube_downloader.download_video(youtube_video_url)
     poster = Poster(get_env_details(f"{Account.CLIP_CHIMP.value}_SESSION_ID"))
-    poster.upload(video)
+    poster.upload_videos(video)
 
 
-def main2():  # Download and Merge Video Tester
-    video_folder = ROOT_DIR / "data/videos"
-    merge_folder = ROOT_DIR / "data/merged/output.mp4"
-    youtube_downloader = YouTubeDownloader(video_folder)
-    youtube_video_url = "https://www.youtube.com/watch?v=Yz6rC4K-Kng"
-    videos = youtube_downloader.download_and_split_video(youtube_video_url)
-    video1 = videos[0]
-    video2 = videos[1]
-
+def main2():
+    downloader = VideoDownloader()
+    vid1 = downloader.download_video("https://www.youtube.com/watch?v=yYXQkQAlMfU")
+    vid2 = downloader.download_video("https://www.youtube.com/watch?v=yYXQkQAlMfU")
     merger = Merger()
-    merger.merge_videos(str(video1), str(video2), str(merge_folder))
+    vid3 = merger.merge_videos(vid1, vid2)
+    poster = Poster(get_env_details(f"{Account.CLIP_CHIMP.value}_SESSION_ID"))
+    poster.upload_videos(vid3)
 
 
 def main3():  # AutoCaptioner Tester
@@ -42,7 +35,7 @@ def main3():  # AutoCaptioner Tester
     VIDEO_OUTPUT_PATH = ROOT_DIR / "data/videos"
     CAPTION_OUTPUT_PATH = ROOT_DIR / "data/captions"
 
-    downloader = YouTubeDownloader(VIDEO_OUTPUT_PATH)
+    downloader = VideoDownloader(VIDEO_OUTPUT_PATH)
     downloader.download_video(VIDEO_URL)
 
     auto_captioner = AutoCaptioner(CAPTION_OUTPUT_PATH)
@@ -61,5 +54,4 @@ def main4():  # Sample Video Tester
 
 
 if __name__ == "__main__":
-    main2()
-
+    main3()

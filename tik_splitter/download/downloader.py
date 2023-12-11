@@ -7,24 +7,27 @@ from pytube import YouTube
 from pytube.exceptions import PytubeError
 from tik_splitter.utils.logging_config import configure_logging
 
+from config import VIDEO_PATH
+from tik_splitter.entities.video import Video
+
 
 class Downloader(ABC):
     def __init__(self, output_path: Path):
-        self.output_path = output_path
+        self._output_path = output_path
         self._logger = configure_logging()
 
     @abstractmethod
-    def download_video(self, url: str) -> Path | None:
+    def download_video(self, url: str) -> Video | None:
         ...
 
 
-class YouTubeDownloader(Downloader):
-    def __init__(self, output_path: Path):
+class VideoDownloader(Downloader):
+    def __init__(self, output_path: Path = VIDEO_PATH):
         super().__init__(output_path)
 
-    def download_video(self, url: str) -> Path | None:
+    def download_video(self, url: str) -> Video | None:
         try:
-            output_directory = str(self.output_path)
+            output_directory = str(self._output_path)  # Convert Path to string
             output_directory_path = Path(output_directory)
             output_directory_path.mkdir(parents=True, exist_ok=True)
 
@@ -42,7 +45,9 @@ class YouTubeDownloader(Downloader):
             self._logger.error(f"An error occurred while downloading YouTube video: {e}")
             return None
 
-        return new_filepath
+        tags = youtube.keywords
+        desc = "#fyp " + " ".join(list(map(lambda tag: "#" + str(tag).strip(), tags)))
+        return Video(new_filepath, youtube.title, desc)
 
     def split_video(self, video_path: Path) -> list[Path]:
         # splits the video into segments of 'segment time'
