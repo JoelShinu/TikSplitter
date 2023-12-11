@@ -18,7 +18,7 @@ def main():
     youtube_video_url = "https://www.youtube.com/watch?v=yYXQkQAlMfU"
     path = youtube_downloader.download_video(youtube_video_url)
 
-    video = TikTokVideo(str(path), "test")
+    video = TikTokVideo(path, "test")
     poster = Poster(get_env_details(f"{Account.CLIP_CHIMP.value}_SESSION_ID"))
     poster.upload(video)
 
