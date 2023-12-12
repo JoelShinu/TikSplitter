@@ -89,7 +89,6 @@ class VideoDownloader(Downloader):
 
 
 class SampleVideoDownloader(Downloader):
-
     def __init__(self, output_path: Path):
         super().__init__(output_path)
 
