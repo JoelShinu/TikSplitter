@@ -7,8 +7,9 @@ from tik_splitter.entities.video import Video
 
 
 class Poster:
-    def __init__(self, session_id: str):
+    def __init__(self, session_id: str, headless: bool = True):
         self._session_id = session_id
+        self._headless = headless
         self._last_uploaded: dt | None = None
 
     def upload_videos(self, *videos: Video):
@@ -35,7 +36,7 @@ class Poster:
             filename=video.get_filename_as_string(),
             description=video.get_optimised_description(),
             sessionid=self._session_id,
-            headless=True,
+            headless=self._headless,
             schedule=upload_time,
         )
 
