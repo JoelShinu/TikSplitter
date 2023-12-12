@@ -3,8 +3,7 @@ import logging
 from config import ROOT_DIR
 from data.sample.sample_video_data import sample_video_dict
 from tik_splitter.caption.auto_caption import AutoCaptioner
-from tik_splitter.download.downloader import (SampleVideoDownloader,
-                                              VideoDownloader)
+from tik_splitter.download.downloader import SampleVideoDownloader, VideoDownloader
 from tik_splitter.merge.merger import Merger
 from tik_splitter.post.account import Account
 from tik_splitter.post.tiktok_poster import Poster
