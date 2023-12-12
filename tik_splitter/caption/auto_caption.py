@@ -1,6 +1,6 @@
 from pathlib import Path
 from typing import Iterable
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import parse_qs, urlparse
 
 from pytube import Caption
 from youtube_transcript_api import YouTubeTranscriptApi

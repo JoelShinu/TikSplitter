@@ -1,7 +1,7 @@
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from urllib.error import URLError, HTTPError
+from urllib.error import HTTPError, URLError
 
 from pytube import YouTube
 from pytube.exceptions import PytubeError

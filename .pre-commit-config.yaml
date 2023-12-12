@@ -16,8 +16,8 @@ repos:
         entry: black
         language: system
         types: [ python ]
-      - id: ruff
-        name: ruff
-        entry: ruff . --fix
+      - id: isort
+        name: isort
+        entry: isort .
         language: system
         types: [ python ]

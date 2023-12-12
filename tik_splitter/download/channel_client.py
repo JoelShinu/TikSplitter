@@ -1,4 +1,5 @@
-from typing import Iterable, Optional
+import asyncio
+from typing import Optional
 
 from pytube import Channel, YouTube
 
@@ -21,18 +22,23 @@ class ChannelClient:
             return None
 
     @property
-    def videos(self) -> Iterable[YouTube]:
-        return self.channel.videos
-
-    @property
     def latest_video(self) -> YouTube:
         return next(iter(self.channel.videos))
 
 
 class ChannelWatcher(ChannelClient):
-
-    def __init__(self, channel: Channel):
+    def __init__(self, channel: Channel, timeout: int = 3600):
         super().__init__(channel)
 
+        # in seconds
+        self.timeout = timeout
 
+    async def watch_channel(self):
+        while True:
+            video: YouTube = self.get_new_video()
 
+            if video:
+                yield video
+
+            # sleep for the given timeout, before checking youtube again
+            await asyncio.sleep(self.timeout)

@@ -25,23 +25,8 @@ pre-commit = "^3.6.0"
 skip-string-normalization = true
 line-length = 120
 
-[tool.ruff]
-# Same as Black.
-line-length = 120
-
-exclude = ["jupyter_notebook_config.py"]
-select = [
-    "E", # pycodestyle errors (settings from FastAPI, thanks, @tiangolo!)
-    "W", # pycodestyle warnings
-    "F", # pyflakes
-    "I", # isort
-    "C", # flake8-comprehensions
-    "B", # flake8-bugbear
-]
-ignore = [
-    "E501", # line too long, handled by black
-    "C901", # too complex
-]
+[tool.isort]
+profile = "black"
 
 [tool.ruff.isort]
 order-by-type = true
