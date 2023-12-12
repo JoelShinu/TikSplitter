@@ -1,4 +1,3 @@
-import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List
@@ -8,7 +7,7 @@ import ffmpeg
 from pytube import YouTube
 from pytube.exceptions import PytubeError
 
-from config import VIDEO_PATH
+from config import SAMPLE_PATH, VIDEO_PATH
 from tik_splitter.entities.video import Video
 from tik_splitter.utils.logging_config import configure_logging
 
@@ -51,17 +50,18 @@ class VideoDownloader(Downloader):
         desc = "#fyp " + " ".join(list(map(lambda tag: "#" + str(tag).strip(), tags)))
         return Video(new_filepath, youtube.title, desc)
 
-    def split_video(self, video_path: Path) -> list[Path]:
+    def split_video(self, video: Video) -> List[Video]:
         # splits the video into segments of 'segment time'
         try:
-            video_title = video_path.stem
-            output_directory = video_path.parent
+            video_filepath = video.get_filename()
+            video_title = video_filepath.stem
+            output_directory = video_filepath.parent
             output_base_filename = video_title.replace(" ", "_")
 
             self._logger.info(f"Splitting video: {video_title}")
 
             (
-                ffmpeg.input(str(video_path))
+                ffmpeg.input(str(video))
                 .output(
                     str(output_directory / f"{output_base_filename}_%02d.mp4"),
                     codec='copy',
@@ -72,35 +72,35 @@ class VideoDownloader(Downloader):
                 .run(overwrite_output=True, capture_stdout=True, capture_stderr=True)
             )
 
-            video_path.unlink()
+            video_filepath.unlink()
             split_video_paths = sorted(output_directory.glob(f"{output_base_filename}_*.mp4"))
             self._logger.info(f"Video splitting complete!")
-            return split_video_paths
+            return [Video(vid_path, video.get_title(), video.get_raw_description()) for vid_path in split_video_paths]
 
         except ffmpeg.Error as e:
             self._logger.error(f"An error occurred while splitting the video: {e}")
             return []
 
-    def download_and_split_video(self, url: str) -> list[Path] | None:
+    def download_and_split_video(self, url: str) -> List[Video] | None:
         # return the list of split video paths
-        video_path = self.download_video(url)
-        if video_path:
-            return self.split_video(video_path.get_filename())
+        video = self.download_video(url)
+        if video:
+            return self.split_video(video)
         return None
 
 
-class SampleVideoDownloader(Downloader):
-    def __init__(self, output_path: Path):
+class SampleVideoDownloader(VideoDownloader):
+    def __init__(self, output_path: Path = SAMPLE_PATH):
         super().__init__(output_path)
 
-    def download_video(self, url: str) -> Path | None:
-        pass
+    def download_video(self, url: str) -> Video | None:
+        ...
 
-    def download_sample_video(self, video_name: str, video_dict: dict) -> Path | None:
+    def download_sample_video(self, video_name: str, video_dict: dict) -> Video | None:
         if video_name in video_dict:
             url = video_dict[video_name]
             self._logger.info("Sample videos successfully downloaded!")
-            return self.download_video(url)
+            return super().download_video(url)
         else:
             self._logger.error(f"No URL found for video name: {video_name}")
             return None
