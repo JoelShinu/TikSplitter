@@ -61,7 +61,7 @@ class VideoDownloader(Downloader):
             self._logger.info(f"Splitting video: {video_title}")
 
             (
-                ffmpeg.input(str(video))
+                ffmpeg.input(video.get_filename_as_string())
                 .output(
                     str(output_directory / f"{output_base_filename}_%02d.mp4"),
                     codec='copy',

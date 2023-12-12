@@ -22,12 +22,13 @@ def main():
 
 def main2():
     downloader = VideoDownloader()
-    vid1 = downloader.download_video("https://www.youtube.com/watch?v=yYXQkQAlMfU")
-    vid2 = downloader.download_video("https://www.youtube.com/watch?v=zoQ1P8SMyeQ")
+    videos = downloader.download_and_split_video("https://www.youtube.com/watch?v=YDp3Np4suO4")
+
     merger = Merger()
-    vid3 = merger.merge_videos(vid1, vid2)
-    # poster = Poster(get_env_details(f"{Account.CLIP_CHIMP.value}_SESSION_ID"))
-    # poster.upload_videos(vid3)
+    merged_vid = merger.merge_videos(videos[0], videos[1])
+
+    poster = Poster(get_env_details(f"{Account.CLIP_CHIMP.value}_SESSION_ID"))
+    poster.upload_videos(merged_vid, videos[2], videos[3])
 
 
 def main3():  # AutoCaptioner Tester
