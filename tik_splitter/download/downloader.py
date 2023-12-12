@@ -2,14 +2,15 @@ import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List
-from urllib.error import URLError, HTTPError
+from urllib.error import HTTPError, URLError
+
 import ffmpeg
 from pytube import YouTube
 from pytube.exceptions import PytubeError
-from tik_splitter.utils.logging_config import configure_logging
 
 from config import VIDEO_PATH
 from tik_splitter.entities.video import Video
+from tik_splitter.utils.logging_config import configure_logging
 
 
 class Downloader(ABC):

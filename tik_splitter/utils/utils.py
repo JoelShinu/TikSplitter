@@ -1,6 +1,6 @@
 import os
 
-from dotenv import load_dotenv, find_dotenv, dotenv_values
+from dotenv import dotenv_values, find_dotenv, load_dotenv
 
 
 def get_env_details(*keys: str) -> dict[str, str | None] | str | None:

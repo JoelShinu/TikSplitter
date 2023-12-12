@@ -431,6 +431,17 @@ files = [
 ]
 
 [[package]]
+name = "isort"
+version = "5.13.1"
+description = "A Python utility / library to sort Python imports."
+optional = false
+python-versions = ">=3.8.0"
+files = [
+    {file = "isort-5.13.1-py3-none-any.whl", hash = "sha256:56a51732c25f94ca96f6721be206dd96a95f42950502eb26c1015d333bc6edb7"},
+    {file = "isort-5.13.1.tar.gz", hash = "sha256:aaed790b463e8703fb1eddb831dfa8e8616bacde2c083bd557ef73c8189b7263"},
+]
+
+[[package]]
 name = "moviepy"
 version = "1.0.3"
 description = "Video editing with Python"
@@ -1141,4 +1152,4 @@ requests = "*"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "9cba2a44a170de01de78dd3b1e3d85449489b6b183f0fdac0e30aa06fb45ed02"
+content-hash = "e8cf533809c26e839d6086cebccfc7f140dcb702c0f63067652aec8a2602ef05"

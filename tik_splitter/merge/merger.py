@@ -1,10 +1,10 @@
 from pathlib import Path
-from numpy import random
 from typing import Union
 
 from moviepy.audio.fx.all import audio_fadein
 from moviepy.editor import VideoFileClip, clips_array
 from moviepy.video.fx.all import resize
+from numpy import random
 
 from config import MERGED_PATH
 from tik_splitter.entities.video import Video
