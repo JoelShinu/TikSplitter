@@ -1,6 +1,10 @@
+from pathlib import Path
+from typing import Union
+
 from moviepy.audio.fx.all import audio_fadein
 from moviepy.editor import VideoFileClip, clips_array
 from moviepy.video.fx.all import resize
+from numpy import random
 
 from config import MERGED_PATH
 from tik_splitter.entities.video import Video
@@ -17,6 +21,17 @@ class Merger:
             vid1 = VideoFileClip(video1.get_filename_as_string())
             vid2 = VideoFileClip(video2.get_filename_as_string())
 
+            # Duration of videos
+            video1_duration = vid1.duration
+            video2_duration = vid2.duration
+
+            # Trim the beginning of video2 randomly if it's longer than video1
+            if video2_duration > video1_duration:
+                start_time = random.uniform(0, video2_duration - video1_duration)
+                trimmed_video2 = vid2.subclip(start_time, start_time + video1_duration)
+            else:
+                trimmed_video2 = vid2
+
             # Resize both videos to 540x960
             resized_video1 = vid1.fx(resize, width=540, height=960)
 
@@ -25,8 +40,6 @@ class Merger:
 
             # Mute video2
             muted_video2 = resized_video2.fx(audio_fadein, 0.01)
-
-            # Set the volume of the muted video2 to 0
             muted_video2 = muted_video2.volumex(0)
 
             # Concatenate the videos vertically

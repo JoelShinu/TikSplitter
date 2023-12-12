@@ -1,8 +1,9 @@
 import logging
 
 from config import ROOT_DIR
+from data.sample.sample_video_data import sample_video_dict
 from tik_splitter.caption.auto_caption import AutoCaptioner
-from tik_splitter.download.downloader import VideoDownloader
+from tik_splitter.download.downloader import SampleVideoDownloader, VideoDownloader
 from tik_splitter.merge.merger import Merger
 from tik_splitter.post.account import Account
 from tik_splitter.post.tiktok_poster import Poster
@@ -22,14 +23,14 @@ def main():
 def main2():
     downloader = VideoDownloader()
     vid1 = downloader.download_video("https://www.youtube.com/watch?v=yYXQkQAlMfU")
-    vid2 = downloader.download_video("https://www.youtube.com/watch?v=yYXQkQAlMfU")
+    vid2 = downloader.download_video("https://www.youtube.com/watch?v=zoQ1P8SMyeQ")
     merger = Merger()
     vid3 = merger.merge_videos(vid1, vid2)
-    poster = Poster(get_env_details(f"{Account.CLIP_CHIMP.value}_SESSION_ID"))
-    poster.upload_videos(vid3)
+    # poster = Poster(get_env_details(f"{Account.CLIP_CHIMP.value}_SESSION_ID"))
+    # poster.upload_videos(vid3)
 
 
-def main3():
+def main3():  # AutoCaptioner Tester
     VIDEO_URL = "https://www.youtube.com/watch?v=yYXQkQAlMfU"
     VIDEO_OUTPUT_PATH = ROOT_DIR / "data/videos"
     CAPTION_OUTPUT_PATH = ROOT_DIR / "data/captions"
@@ -44,6 +45,12 @@ def main3():
         auto_captioner.save_captions_as_srt(captions, "captions_output")
     else:
         logging.warning("No captions available")
+
+
+def main4():  # Sample Video Tester
+    sample_folder = ROOT_DIR / "data/sample"
+    sample_downloader = SampleVideoDownloader(sample_folder)
+    sample_downloader.download_sample_video("sample2", sample_video_dict)
 
 
 if __name__ == "__main__":
