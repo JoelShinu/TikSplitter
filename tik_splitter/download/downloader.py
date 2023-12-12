@@ -1,6 +1,7 @@
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
+from typing import List
 from urllib.error import URLError, HTTPError
 import ffmpeg
 from pytube import YouTube
@@ -83,7 +84,7 @@ class VideoDownloader(Downloader):
         # return the list of split video paths
         video_path = self.download_video(url)
         if video_path:
-            return self.split_video(video_path)
+            return self.split_video(video_path.get_filename())
         return None
 
 
