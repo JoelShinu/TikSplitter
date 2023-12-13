@@ -1,6 +1,7 @@
 from datetime import datetime as dt
 from datetime import timedelta as td
 
+from selenium.webdriver.chrome.options import Options
 from tiktok_uploader.upload import upload_video
 
 from tik_splitter.entities.video import Video
@@ -10,6 +11,8 @@ class Poster:
     def __init__(self, session_id: str, headless: bool = True):
         self._session_id = session_id
         self._headless = headless
+        self._options = Options()
+        self._options.add_argument("start-maximized")
         self._last_uploaded: dt | None = None
 
     def upload_videos(self, *videos: Video):
@@ -37,6 +40,7 @@ class Poster:
             description=video.get_optimised_description(),
             sessionid=self._session_id,
             headless=self._headless,
+            options=self._options,
             schedule=upload_time,
         )
 

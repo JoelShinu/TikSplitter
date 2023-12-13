@@ -47,7 +47,7 @@ class VideoDownloader(Downloader):
             return None
 
         tags = youtube.keywords
-        desc = "#fyp " + " ".join(list(map(lambda tag: "#" + str(tag).strip(), tags)))
+        desc = "#fyp " + " ".join(list(map(lambda tag: "#" + str(tag).replace(" ", ""), tags)))
         return Video(new_filepath, youtube.title, desc)
 
     def split_video(self, video: Video) -> List[Video]:
