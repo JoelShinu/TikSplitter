@@ -46,9 +46,9 @@ class VideoDownloader(Downloader):
             new_filename = video_title + ".mp4"
             video_filepath = output_path / new_filename
 
-            if start_time and end_time:  # TODO: if start_ or end_time:
-                start = get_sec(start_time)  # TODO: if start_time else 0
-                end = get_sec(end_time)  # TODO: if end_time else video_length
+            if start_time and end_time:
+                start = get_sec(start_time)
+                end = get_sec(end_time)
                 video = VideoFileClip(str(video_download)).subclip(start, end)
                 video.write_videofile(str(video_filepath))
                 video.close()
