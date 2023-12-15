@@ -155,8 +155,9 @@ class SampleVideoDownloader(VideoDownloader):
     def download_video(self, url: str) -> Video | None:
         ...
 
-    def download_sample_video(self, video_name: str, json_file_path: Path) -> Video | None:
-        # TODO: should the json_file_path in the method be Path = SAMPLE_PATH?
+    def download_sample_video(
+        self, video_name: str, json_file_path: Path = Path(SAMPLE_PATH / "sample_video_data.json")
+    ) -> Video | None:
         with open(json_file_path, 'r') as file:
             video_dict = json.load(file)
 
