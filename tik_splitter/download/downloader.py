@@ -8,11 +8,10 @@ from urllib.error import HTTPError, URLError
 import ffmpeg
 from moviepy.video.io.VideoFileClip import VideoFileClip
 from pytube import YouTube
-from pytube.cli import on_progress
 from pytube.exceptions import PytubeError
 
 from config import SAMPLE_PATH, VIDEO_PATH
-from tik_splitter.entities.video import Video
+from tik_splitter.entities.video import Video, convertTagsToHashtags
 from tik_splitter.utils.logging_config import configure_logging
 from tik_splitter.utils.utils import clean_string, get_sec
 
@@ -23,7 +22,7 @@ class Downloader(ABC):
         self._logger = configure_logging()
 
     @abstractmethod
-    def download_video(self, url: str) -> Video | None:
+    def download_video(self, url: str, start_time: str, end_time: str) -> Video | None:
         ...
 
 
@@ -39,19 +38,32 @@ class VideoDownloader(Downloader):
             output_directory = str(self._output_path)  # Convert Path to string
 
             youtube = YouTube(url)
-            video_title = clean_string(youtube.title)  # regex video name
-            video_length = youtube.length
-            video_stream = youtube.streams.get_highest_resolution()
+            video_title = clean_string(youtube.title)
+
+            new_filename = video_title + ".mp4"
+            video_filepath = output_path / new_filename
+
+            if video_filepath.is_file():
+                self._logger.info(f"File already exists, saved as: {new_filename}")
+                desc = convertTagsToHashtags(youtube.keywords)
+                duration = (
+                    int(youtube.length)
+                    if not (start_time or end_time)
+                    else int(get_sec(end_time) - get_sec(start_time))
+                )
+                return Video(video_filepath, youtube.title, desc, duration)
+
+            video_stream = youtube.streams.get_highest_resolution()  # regex video name
 
             self._logger.info(f"Downloading YouTube video: {youtube.title}")
             video_download = video_stream.download(output_directory)
-            new_filename = video_title + ".mp4"
-            video_filepath = output_path / new_filename
 
             if start_time and end_time:
                 start = get_sec(start_time)
                 end = get_sec(end_time)
                 video = VideoFileClip(str(video_download)).subclip(start, end)
+                new_filename = video_title + f"_start{start}_end{end}.mp4"
+                video_filepath = output_path / new_filename
                 video.write_videofile(str(video_filepath))
                 video.close()
 
@@ -63,12 +75,11 @@ class VideoDownloader(Downloader):
 
             self._logger.info(f"Download Complete! File saved as: {new_filename}")
 
-        except (URLError, HTTPError, PytubeError, subprocess.CalledProcessError) as e:
+        except (URLError, HTTPError, PytubeError, subprocess.CalledProcessError, FileExistsError) as e:
             self._logger.error(f"An error occurred while downloading YouTube video: {e}")
             return None
 
-        tags = youtube.keywords
-        desc = "#fyp " + " ".join(list(map(lambda tag: "#" + str(tag).replace(" ", ""), tags)))
+        desc = convertTagsToHashtags(youtube.keywords)
         duration = video_duration
         return Video(video_filepath, youtube.title, desc, duration)
 
@@ -115,7 +126,7 @@ class VideoDownloader(Downloader):
             return []
 
     def download_and_split_video(
-        self, url: str, start_time: str = None, end_time: str = None, clip_size: int = None
+        self, url: str, start_time: str = None, end_time: str = None, clip_size: int = 90
     ) -> List[Video] | None:
         # return the list of split video paths
         video = self.download_video(url, start_time, end_time)
@@ -153,9 +164,6 @@ class VideoDownloader(Downloader):
 class SampleVideoDownloader(VideoDownloader):
     def __init__(self, output_path: Path = SAMPLE_PATH):
         super().__init__(output_path)
-
-    def download_video(self, url: str) -> Video | None:
-        ...
 
     def download_sample_video(
         self, video_name: str, json_file_path: Path = Path(SAMPLE_PATH / "sample_video_data.json")

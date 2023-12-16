@@ -40,7 +40,7 @@ class Poster:
             description=video.get_optimised_description(),
             sessionid=self._session_id,
             headless=self._headless,
-            options=self._options,
+            options=self._options if self._headless is False else None,
             schedule=upload_time,
         )
 

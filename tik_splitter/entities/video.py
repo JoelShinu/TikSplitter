@@ -1,4 +1,9 @@
 from pathlib import Path
+from typing import List
+
+
+def convertTagsToHashtags(tags: List[str]) -> str:
+    return "#fyp " + " ".join(list(map(lambda tag: "#" + str(tag).replace(" ", ""), tags)))
 
 
 class Video:

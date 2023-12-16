@@ -1,7 +1,3 @@
-import logging
-from pathlib import Path
-
-from config import ROOT_DIR
 from tik_splitter.caption.auto_caption import AutoCaptioner
 from tik_splitter.download.downloader import SampleVideoDownloader, VideoDownloader
 from tik_splitter.entities.account import Account
@@ -38,22 +34,21 @@ def main3():  # Auto-Caption Tester
 
 
 def main4():  # Sample Video Tester
-    sample_file = Path("C:\\Users\\jenzy\\PycharmProjects\\TikSplitter\\data\\sample\\sample_video_data.json")
     sample = SampleVideoDownloader()
-    sample.download_sample_video("subway_surfers1", sample_file)
+    sample.download_sample_video("subway_surfers1")
 
 
 def main5():  # Full Functionality Tester - Download, Split, Merge, Post
     downloader = VideoDownloader()
-    sample = SampleVideoDownloader()
+    sampler = SampleVideoDownloader()
     merger = Merger()
     poster = Poster(get_env_details(f"{Account.CLIP_CHIMP.value}_SESSION_ID"))
-    sample_file = Path("C:\\Users\\jenzy\\PycharmProjects\\TikSplitter\\data\\sample\\sample_video_data.json")
-    vid1 = downloader.download_and_split_video("https://www.youtube.com/watch?v=aNIQ0MUkOCs")
-    vid2 = sample.download_sample_video("gta_2", sample_file)
-    vid3 = merger.merge_videos(vid1[0], vid2)
-    poster.upload_videos(vid3)
+    videos = downloader.download_and_split_video("https://www.youtube.com/watch?v=3jS_yEK8qVI")
+    sample = sampler.download_sample_video("subway_surfers1")
+    for vid in videos:
+        merged = merger.merge_videos(vid, sample)
+        poster.upload_videos(merged)
 
 
 if __name__ == "__main__":
-    main2()
+    main5()
