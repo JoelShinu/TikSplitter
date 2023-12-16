@@ -43,7 +43,7 @@ class VideoDownloader(Downloader):
             output_directory = str(self._output_path)  # Convert Path to string
 
             youtube = YouTube(url)
-            video_title = clean_string(youtube.title)
+            video_title = clean_string(youtube.title)  # regex video name
 
             new_filename = video_title + ".mp4"
             video_filepath = output_path / new_filename
@@ -58,7 +58,7 @@ class VideoDownloader(Downloader):
                 )
                 return Video(video_filepath, youtube.title, desc, duration)
 
-            video_stream = youtube.streams.get_highest_resolution()  # regex video name
+            video_stream = youtube.streams.get_highest_resolution()
 
             self._logger.info(f"Downloading YouTube video: {youtube.title}")
             video_download = video_stream.download(output_directory)
