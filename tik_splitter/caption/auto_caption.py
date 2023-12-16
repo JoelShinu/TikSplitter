@@ -2,16 +2,38 @@ from pathlib import Path
 from typing import Iterable
 from urllib.parse import parse_qs, urlparse
 
-from pytube import Caption
+from pytube import Caption, YouTube
 from youtube_transcript_api import YouTubeTranscriptApi
 
+from config import CAPTION_PATH
 from tik_splitter.utils.logging_config import configure_logging
+from tik_splitter.utils.utils import clean_string
 
 
 class AutoCaptioner:
-    def __init__(self, output_path: Path):
+    def __init__(self, output_path: Path = CAPTION_PATH):
         self._output_path = Path(output_path)
         self._logging = configure_logging()
+
+    def get_and_save_captions(self, video_url: str):
+        try:
+            # Get video ID and captions
+            video_id = self.extract_video_id(video_url)
+            if video_id:
+                captions = YouTubeTranscriptApi.get_transcript(video_id, languages=["en"])
+
+                # Get video title and clean it
+                video_title = self.get_video_title(video_url)
+                formatted_title = clean_string(video_title)
+
+                # Save captions as SRT with formatted video title
+                self.save_captions_as_srt(captions, formatted_title)
+
+            else:
+                self._logging.error("Unable to extract video ID from the YouTube URL.")
+
+        except Exception as e:
+            self._logging.error(f"An error occurred: {e}")
 
     def get_captions(self, video_url: str) -> Iterable[Caption] | None:
         try:
@@ -51,20 +73,15 @@ class AutoCaptioner:
                     srt_file.write(f"{caption['start']} --> {caption['start'] + caption['duration']}\n")
                     srt_file.write(f"{caption['text']}\n\n")
 
-            self._logging.warning(f"Captions saved as SRT file: {output_file_path}")
+            self._logging.info(f"Captions saved as SRT file: {output_file_path}")
 
         except Exception as e:
             self._logging.error(f"An error occurred while saving captions as SRT: {e}")
 
-    def save_captions_as_txt(self, captions: Iterable[Caption], output_filename: str):
+    def get_video_title(self, video_url: str) -> str:
         try:
-            output_file_path = self._output_path / (output_filename + ".txt")
-
-            with open(output_file_path, 'w', encoding='utf-8') as txt_file:
-                for i, caption in enumerate(captions, start=1):
-                    txt_file.write(f"{i}. {caption['text']}\n")
-
-            self._logging.warning(f"Captions saved as TXT file: {output_file_path}")
-
+            video_info = YouTube(video_url)
+            return video_info.title
         except Exception as e:
-            self._logging.error(f"An error occurred while saving captions as TXT: {e}")
+            self._logging.error(f"An error occurred while fetching video title: {e}")
+            return ""
