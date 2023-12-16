@@ -31,3 +31,17 @@ class Video:
 
     def get_duration(self) -> int:
         return self._duration
+
+
+class SplitVideo(Video):
+    def __init__(self, filename: Path, title: str, description: str, duration: int, part: int):
+        super().__init__(filename, title, description, duration)
+        self._part = part
+
+    def get_optimised_description(self) -> str:
+        desc = super().get_optimised_description()
+        return f"#part{self._part} " + desc
+
+
+def convertVideoToSplitVideo(video: Video, part: int) -> SplitVideo:
+    return SplitVideo(video.get_filename(), video.get_title(), video.get_raw_description(), video.get_duration(), part)

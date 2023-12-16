@@ -11,7 +11,12 @@ from pytube import YouTube
 from pytube.exceptions import PytubeError
 
 from config import SAMPLE_PATH, VIDEO_PATH
-from tik_splitter.entities.video import Video, convertTagsToHashtags
+from tik_splitter.entities.video import (
+    SplitVideo,
+    Video,
+    convertTagsToHashtags,
+    convertVideoToSplitVideo,
+)
 from tik_splitter.utils.logging_config import configure_logging
 from tik_splitter.utils.utils import clean_string, get_sec
 
@@ -84,7 +89,7 @@ class VideoDownloader(Downloader):
         duration = video_duration
         return Video(video_filepath, youtube.title, desc, duration)
 
-    def split_video(self, video: Video, clip_size: int = 90) -> List[Video]:
+    def split_video(self, video: Video, clip_size: int = 90) -> List[SplitVideo]:
         # splits the video into segments of 'segment time'
         try:
             video_filepath = video.get_filename()
@@ -101,19 +106,17 @@ class VideoDownloader(Downloader):
             for i in range(number_of_clips - 1):
                 start_time = i * clip_size
                 end_time = (i + 1) * clip_size
-                self.process_clip(video, output_directory, video_title, start_time, end_time, i + 1, combined_clips)
+                combined_clips.append(
+                    self.process_clip(video, output_directory, video_title, start_time, end_time, i + 1)
+                )
 
             # Process the last clip separately
             start_time_last_clip = (number_of_clips - 1) * clip_size
             end_time_last_clip = duration
-            self.process_clip(
-                video,
-                output_directory,
-                video_title,
-                start_time_last_clip,
-                end_time_last_clip,
-                number_of_clips,
-                combined_clips,
+            combined_clips.append(
+                self.process_clip(
+                    video, output_directory, video_title, start_time_last_clip, end_time_last_clip, number_of_clips
+                )
             )
 
             self._logger.info(f"Video splitting complete!")
@@ -144,8 +147,7 @@ class VideoDownloader(Downloader):
         start_time: int,
         end_time: int,
         clip_number: int,
-        combined_clips: List[Video],
-    ):
+    ) -> SplitVideo:
         output_filepath = str(output_directory / f"{video_title}_{clip_number}.mp4")
 
         (
@@ -160,7 +162,7 @@ class VideoDownloader(Downloader):
         video_clip = Video(
             Path(output_filepath), video.get_title(), video.get_raw_description(), int(end_time - start_time)
         )
-        combined_clips.append(video_clip)
+        return convertVideoToSplitVideo(video_clip, clip_number)
 
 
 class SampleVideoDownloader(VideoDownloader):
