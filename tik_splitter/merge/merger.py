@@ -10,7 +10,7 @@ from tik_splitter.utils.logging_config import configure_logging
 
 class Merger:
     def __init__(self):
-        self._logger = configure_logging()
+        self._logger = configure_logging("merger")
 
     def merge_videos(self, video: Video, sample: Video) -> Video | None:
         try:
@@ -49,7 +49,8 @@ class Merger:
             self._logger.info(f"Videos successfully merged and saved at {file_location}")
 
         except Exception as e:
-            self._logger.error(f"An error occurred: {e}")
+            self._logger.error("Merge failed:")
+            self._logger.exception(e)
             return None
 
         return Video(

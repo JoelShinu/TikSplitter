@@ -13,7 +13,7 @@ from tik_splitter.utils.utils import clean_string
 class AutoCaptioner:
     def __init__(self, output_path: Path = CAPTION_PATH):
         self._output_path = Path(output_path)
-        self._logging = configure_logging()
+        self._logging = configure_logging("captioner")
 
     def get_and_save_captions(self, video_url: str):
         try:
@@ -33,7 +33,8 @@ class AutoCaptioner:
                 self._logging.error("Unable to extract video ID from the YouTube URL.")
 
         except Exception as e:
-            self._logging.error(f"An error occurred: {e}")
+            self._logging.error("An error occurred while saving captions:")
+            self._logging.exception(e)
 
     def get_captions(self, video_url: str) -> Iterable[Caption] | None:
         try:
@@ -46,7 +47,8 @@ class AutoCaptioner:
                 return None
 
         except Exception as e:
-            self._logging.error(f"An error occurred while fetching captions: {e}")
+            self._logging.error("An error occurred while fetching captions:")
+            self._logging.exception(e)
             return None
 
     def extract_video_id(self, video_url: str) -> str | None:
@@ -60,7 +62,8 @@ class AutoCaptioner:
 
             return video_id
         except Exception as e:
-            self._logging.error(f"An error occurred while extracting video ID: {e}")
+            self._logging.error("An error occurred while extracting video ID:")
+            self._logging.exception(e)
             return None
 
     def save_captions_as_srt(self, captions: Iterable[Caption], output_filename: str):
@@ -76,12 +79,14 @@ class AutoCaptioner:
             self._logging.info(f"Captions saved as SRT file: {output_file_path}")
 
         except Exception as e:
-            self._logging.error(f"An error occurred while saving captions as SRT: {e}")
+            self._logging.error("An error occurred while saving captions as SRT:")
+            self._logging.exception(e)
 
     def get_video_title(self, video_url: str) -> str:
         try:
             video_info = YouTube(video_url)
             return video_info.title
         except Exception as e:
-            self._logging.error(f"An error occurred while fetching video title: {e}")
+            self._logging.error("An error occurred while fetching video title:")
+            self._logging.exception(e)
             return ""

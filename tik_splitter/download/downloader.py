@@ -19,7 +19,7 @@ from tik_splitter.utils.utils import clean_string, get_sec
 class Downloader(ABC):
     def __init__(self, output_path: Path):
         self._output_path = output_path
-        self._logger = configure_logging()
+        self._logger = configure_logging("downloader")
 
     @abstractmethod
     def download_video(self, url: str, start_time: str, end_time: str) -> Video | None:
@@ -76,7 +76,8 @@ class VideoDownloader(Downloader):
             self._logger.info(f"Download Complete! File saved as: {new_filename}")
 
         except (URLError, HTTPError, PytubeError, subprocess.CalledProcessError, FileExistsError) as e:
-            self._logger.error(f"An error occurred while downloading YouTube video: {e}")
+            self._logger.error("An error occurred while downloading YouTube video:")
+            self._logger.exception(e)
             return None
 
         desc = convertTagsToHashtags(youtube.keywords)
@@ -122,7 +123,8 @@ class VideoDownloader(Downloader):
             return combined_clips
 
         except ffmpeg.Error as e:
-            self._logger.error(f"An error occurred while splitting the video: {e}")
+            self._logger.error("An error occurred while splitting the video:")
+            self._logger.exception(e)
             return []
 
     def download_and_split_video(
