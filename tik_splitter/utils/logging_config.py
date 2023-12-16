@@ -1,21 +1,17 @@
 import logging
-from pathlib import Path
+import sys
+
+from config import LOG_PATH
 
 
-def configure_logging():
-    # Get the directory of the script or module calling this function
-    root_folder = Path(__file__).resolve().parent
-
-    log_folder = root_folder / "logs"
-    log_folder.mkdir(parents=True, exist_ok=True)
-
-    log_file_path = log_folder / "app.log"
+def configure_logging(name: str = "logger") -> logging.Logger:
+    log_file_path = LOG_PATH / f"{name}.log"
 
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(levelname)s - %(message)s",
-        handlers=[logging.FileHandler(log_file_path), logging.StreamHandler()],
+        handlers=[logging.FileHandler(log_file_path), logging.StreamHandler(sys.stdout)],
     )
 
-    logger = logging.getLogger("TikSplitter")
+    logger = logging.getLogger(f"TikSplitter-{name}")
     return logger

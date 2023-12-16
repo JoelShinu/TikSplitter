@@ -1,8 +1,9 @@
-from pathlib import Path
-import zipfile
-import requests
-import subprocess
 import os
+import subprocess
+import zipfile
+from pathlib import Path
+
+import requests
 
 
 def ffmpeg_install_windows():
