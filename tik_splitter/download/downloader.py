@@ -132,7 +132,7 @@ class VideoDownloader(Downloader):
 
     def download_and_split_video(
         self, url: str, start_time: str = None, end_time: str = None, clip_size: int = 90
-    ) -> List[Video] | None:
+    ) -> List[SplitVideo] | None:
         # return the list of split video paths
         video = self.download_video(url, start_time, end_time)
         if video:

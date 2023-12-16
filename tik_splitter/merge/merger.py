@@ -4,7 +4,7 @@ from moviepy.video.fx.all import resize
 from numpy import random
 
 from config import MERGED_PATH
-from tik_splitter.entities.video import Video
+from tik_splitter.entities.video import SplitVideo, Video
 from tik_splitter.utils.logging_config import configure_logging
 
 
@@ -52,6 +52,11 @@ class Merger:
             self._logger.error("Merge failed:")
             self._logger.exception(e)
             return None
+
+        if isinstance(video, SplitVideo):
+            return SplitVideo(
+                file_location, merged_title, video.get_raw_description(), video1_duration, video.get_part()
+            )
 
         return Video(
             file_location,

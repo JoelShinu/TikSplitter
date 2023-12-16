@@ -38,6 +38,9 @@ class SplitVideo(Video):
         super().__init__(filename, title, description, duration)
         self._part = part
 
+    def get_part(self) -> int:
+        return self._part
+
     def get_optimised_description(self) -> str:
         desc = super().get_optimised_description()
         return f"#part{self._part} " + desc

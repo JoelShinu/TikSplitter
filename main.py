@@ -43,7 +43,7 @@ def main5():  # Full Functionality Tester - Download, Split, Merge, Post
     sampler = SampleVideoDownloader()
     merger = Merger()
     poster = Poster(get_env_details(f"{Account.CLIP_CHIMP.value}_SESSION_ID"))
-    videos = downloader.download_and_split_video("https://www.youtube.com/watch?v=3jS_yEK8qVI")
+    videos = downloader.download_and_split_video("https://www.youtube.com/watch?v=K-hzWYIQU70", clip_size=120)
     sample = sampler.download_sample_video("subway_surfers1")
     for vid in videos:
         merged = merger.merge_videos(vid, sample)
