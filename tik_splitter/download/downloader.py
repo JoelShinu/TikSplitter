@@ -14,7 +14,7 @@ from config import SAMPLE_PATH, VIDEO_PATH
 from tik_splitter.entities.video import (
     SplitVideo,
     Video,
-    convertTagsToHashtags,
+    convertToHashtags,
     convertVideoToSplitVideo,
 )
 from tik_splitter.utils.logging_config import configure_logging
@@ -43,6 +43,7 @@ class VideoDownloader(Downloader):
             output_directory = str(self._output_path)  # Convert Path to string
 
             youtube = YouTube(url)
+            author = youtube.author
             video_title = clean_string(youtube.title)  # regex video name
 
             new_filename = video_title + ".mp4"
@@ -50,7 +51,7 @@ class VideoDownloader(Downloader):
 
             if video_filepath.is_file():
                 self._logger.info(f"File already exists, saved as: {new_filename}")
-                desc = convertTagsToHashtags(youtube.keywords)
+                desc = convertToHashtags(youtube.keywords, author)
                 duration = (
                     int(youtube.length)
                     if not (start_time or end_time)
@@ -85,7 +86,7 @@ class VideoDownloader(Downloader):
             self._logger.exception(e)
             return None
 
-        desc = convertTagsToHashtags(youtube.keywords)
+        desc = convertToHashtags(youtube.keywords, author)
         duration = video_duration
         return Video(video_filepath, youtube.title, desc, duration)
 
