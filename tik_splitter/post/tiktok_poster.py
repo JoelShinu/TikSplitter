@@ -1,25 +1,47 @@
 from datetime import datetime as dt
 from datetime import timedelta as td
+from typing import List
 
 from selenium.webdriver.chrome.options import Options
 from tiktok_uploader.upload import upload_video
 
 from tik_splitter.entities.video import Video
+from tik_splitter.utils.logging_config import configure_logging
 
 
 class Poster:
-    def __init__(self, session_id: str, headless: bool = True):
+    def __init__(self, session_id: str, headless: bool = True, last_uploaded: dt = None):
         self._session_id = session_id
         self._headless = headless
         self._options = Options()
         self._options.add_argument("start-maximized")
-        self._last_uploaded: dt | None = None
+        self._last_uploaded = last_uploaded
+        self._logger = configure_logging("poster")
 
-    def upload_videos(self, *videos: Video):
+    def get_last_uploaded(self) -> dt:
+        return self._last_uploaded
+
+    def upload_videos(self, *videos: Video) -> List[Video]:
+        failed_uploads = []
+
         for video in videos:
+            if len(failed_uploads) != 0:
+                failed_uploads.append(video)
+                continue
+
             success = self.upload(video)
             if not success:  # retry once if failed upload
-                self.upload(video)
+                self._logger.warning(f"Failed to post: [{video.get_title()}], retrying...")
+
+                success = self.upload(video)
+                if not success:
+                    failed_uploads.append(video)
+                    self._logger.error(f"Failed to post: [{video.get_title()}] again. Quitting...")
+                    continue
+
+            self._logger.info(f"Successfully posted: [{video.get_title()}]")
+
+        return failed_uploads
 
     def upload(self, video: Video) -> bool:
         now = dt.utcnow()
@@ -44,5 +66,8 @@ class Poster:
             schedule=upload_time,
         )
 
-        self._last_uploaded = now if upload_time is None else upload_time
-        return len(failed_uploads) == 0
+        success = len(failed_uploads) == 0
+        if success:
+            self._last_uploaded = now if upload_time is None else upload_time
+
+        return success

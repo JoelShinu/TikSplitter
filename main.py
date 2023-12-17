@@ -1,6 +1,10 @@
+import random
+from datetime import datetime as dt
+
 from tik_splitter.caption.auto_caption import AutoCaptioner
 from tik_splitter.download.downloader import SampleVideoDownloader, VideoDownloader
 from tik_splitter.entities.account import Account
+from tik_splitter.entities.username import Username
 from tik_splitter.merge.merger import Merger
 from tik_splitter.post.tiktok_poster import Poster
 from tik_splitter.utils.utils import get_env_details
@@ -11,7 +15,7 @@ def main():  # Download and Post Tester
     youtube_video_url = "https://www.youtube.com/watch?v=0ahOSXe1ow0"
 
     video = youtube_downloader.download_video(youtube_video_url)
-    poster = Poster(get_env_details(f"{Account.CLIP_CHIMP.value}_SESSION_ID"))
+    poster = Poster(get_env_details(f"{Username.CLIP_CHIMP.value}_SESSION_ID"))
     poster.upload_videos(video)
 
 
@@ -24,7 +28,7 @@ def main2():  # Download, Merge and Post Tester
     merger = Merger()
     merged_vid = merger.merge_videos(videos[0], videos[1])
 
-    poster = Poster(get_env_details(f"{Account.CLIP_CHIMP.value}_SESSION_ID"))
+    poster = Poster(get_env_details(f"{Username.CLIP_CHIMP.value}_SESSION_ID"))
     poster.upload_videos(merged_vid, videos[2], videos[3])
 
 
@@ -42,12 +46,20 @@ def main5():  # Full Functionality Tester - Download, Split, Merge, Post
     downloader = VideoDownloader()
     sampler = SampleVideoDownloader()
     merger = Merger()
-    poster = Poster(get_env_details(f"{Account.CLIP_CHIMP.value}_SESSION_ID"))
-    videos = downloader.download_and_split_video("https://www.youtube.com/watch?v=K-hzWYIQU70", clip_size=120)
-    sample = sampler.download_sample_video("subway_surfers1")
+    account = Account(Username.CLIP_CHIMP)
+    poster = Poster(account.get_session_id(), last_uploaded=dt(2023, 12, 18, 0, 0))
+    videos = downloader.download_and_split_video("https://www.youtube.com/watch?v=9RhWXPcKBI8", clip_size=180)
+    sample1 = sampler.download_sample_video("subway_surfers1")
+    sample2 = sampler.download_sample_video("minecraft1")
+    merged = []
     for vid in videos:
-        merged = merger.merge_videos(vid, sample)
-        poster.upload_videos(merged)
+        merged.append(merger.merge_videos(vid, random.choice([sample1, sample2])))
+
+    failed = poster.upload_videos(*merged)
+    if len(failed) != 0:
+        last_uploaded = poster.get_last_uploaded()
+        poster = Poster(account.get_session_id(), False, last_uploaded)
+        poster.upload_videos(*failed)
 
 
 if __name__ == "__main__":
