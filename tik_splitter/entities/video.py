@@ -1,9 +1,16 @@
 from pathlib import Path
 from typing import List
 
+from tik_splitter.utils.utils import clean_string
 
-def convertTagsToHashtags(tags: List[str]) -> str:
-    return "#fyp " + " ".join(list(map(lambda tag: "#" + str(tag).replace(" ", ""), tags)))
+
+def convertToHashtags(tags: List[str], author: str) -> str:
+    return (
+        "#fyp "
+        + " ".join(list(map(lambda tag: "#" + str(tag).replace(" ", ""), tags)))
+        + " #"
+        + clean_string(author).replace("_", "")
+    )
 
 
 class Video:
@@ -47,4 +54,10 @@ class SplitVideo(Video):
 
 
 def convertVideoToSplitVideo(video: Video, part: int) -> SplitVideo:
-    return SplitVideo(video.get_filename(), video.get_title(), video.get_raw_description(), video.get_duration(), part)
+    return SplitVideo(
+        video.get_filename(),
+        video.get_title() + f" (Part {part})",
+        video.get_raw_description(),
+        video.get_duration(),
+        part,
+    )
