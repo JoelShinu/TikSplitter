@@ -51,16 +51,15 @@ class Merger:
             if isinstance(video, SplitVideo):
                 # Create a TextClip with the caption for one frame
                 caption_text = f'{video.get_title()} part {video.get_part()}'
-                # Calculate appropriate fontsize for one-line caption
-                fontsize = min(resized_video1.size[1], resized_video2.size[1]) // 8
-
-                caption_clip = TextClip(caption_text, fontsize=fontsize, color='white', font='Komika')
+                fontsize = 90
+                lines = self.split_text_lines(caption_text, fontsize, resized_video1.size[0])
+                caption_clip = TextClip(lines, font='Komika-Axis', fontsize=fontsize, color='white', stroke_color='black', stroke_width=8)
                 caption_clip = caption_clip.set_duration(1)  # Display for 1 second
-                caption_clip = caption_clip.set_pos('center', 606)
+                caption_clip = caption_clip.set_position((0, 606))
 
             # Position video1 in the top half, and video2 in the bottom half
             final_video = CompositeVideoClip(
-                [resized_video1.set_position((0, 0)), muted_video2.set_position((0, 606))], size=(1080, 1920)
+                [resized_video1.set_position((0, 0)), muted_video2.set_position(('center', 606))], size=(1080, 1920)
             )
             final_video = CompositeVideoClip([final_video, caption_clip], size=(1080, 1920))
 
@@ -88,3 +87,20 @@ class Merger:
             video.get_raw_description(),
             video1_duration,
         )
+
+    def split_text_lines(self, text, fontsize, max_width):
+        # Split the text into lines that fit within the specified width
+        lines = []
+        line = ""
+        for word in text.split():
+            temp_line = line + " " + word if line else word
+            temp_clip = TextClip(temp_line, font='Komika-Axis', fontsize=fontsize, color='white',
+                                 stroke_color='black', stroke_width=4)
+            if temp_clip.size[0] > max_width:
+                lines.append(line)
+                line = word
+            else:
+                line = temp_line
+        if line:
+            lines.append(line)
+        return '\n'.join(lines)
