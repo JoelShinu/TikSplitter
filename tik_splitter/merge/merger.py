@@ -53,7 +53,9 @@ class Merger:
                 caption_text = f'{video.get_title()} part {video.get_part()}'
                 fontsize = 90
                 lines = self.split_text_lines(caption_text, fontsize, resized_video1.size[0])
-                caption_clip = TextClip(lines, font='Komika-Axis', fontsize=fontsize, color='white', stroke_color='black', stroke_width=8)
+                caption_clip = TextClip(
+                    lines, font='Komika-Axis', fontsize=fontsize, color='white', stroke_color='black', stroke_width=8
+                )
                 caption_clip = caption_clip.set_duration(1)  # Display for 1 second
                 caption_clip = caption_clip.set_position((0, 606))
 
@@ -94,8 +96,9 @@ class Merger:
         line = ""
         for word in text.split():
             temp_line = line + " " + word if line else word
-            temp_clip = TextClip(temp_line, font='Komika-Axis', fontsize=fontsize, color='white',
-                                 stroke_color='black', stroke_width=4)
+            temp_clip = TextClip(
+                temp_line, font='Komika-Axis', fontsize=fontsize, color='white', stroke_color='black', stroke_width=4
+            )
             if temp_clip.size[0] > max_width:
                 lines.append(line)
                 line = word
