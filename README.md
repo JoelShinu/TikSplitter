@@ -10,7 +10,7 @@ This Python-based project serves as a YouTube to TikTok video converter. It allo
 
 2. **ffmpeg Executable**: Download the ffmpeg executable from the official website: [ffmpeg Download](https://ffmpeg.org/download.html). Add the directory containing the ffmpeg executable to your system's PATH.
 
-3. **ImageMagick**: Download the ImageMagick executable and update the policy.xml file. Change the rights to "read, write" for the policy domain="Undefined". Set the location of the ImageMagick binary executable in the `Merger` class of the project.
+3. **ImageMagick**: Download the ImageMagick executable from the official website: [ImageMagick Download](https://imagemagick.org/archive/binaries/ImageMagick-7.1.1-23-Q16-HDRI-x64-dll.exe). Update the policy.xml file. Change the rights to "read, write" for the policy domain="Undefined". Set the location of the ImageMagick binary executable in the `Merger` class of the project.
 
    **Note**: Ensure that both ffmpeg and ImageMagick executables are accessible from the command line.
 
