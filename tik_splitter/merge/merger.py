@@ -1,7 +1,8 @@
 from moviepy.audio.fx.all import audio_fadein
-from moviepy.editor import VideoFileClip, clips_array
-from moviepy.video.fx.all import resize
+from moviepy.editor import TextClip, VideoFileClip, CompositeVideoClip, clips_array
+from moviepy.video.fx.all import crop, resize
 from numpy import random
+from moviepy.config import change_settings
 
 from config import MERGED_PATH
 from tik_splitter.entities.video import SplitVideo, Video
@@ -14,6 +15,9 @@ class Merger:
 
     def merge_videos(self, video: Video, sample: Video) -> Video | None:
         try:
+            change_settings(
+                {"IMAGEMAGICK_BINARY": r"C:\\Program Files\\ImageMagick-7.1.1-Q16-HDRI\\magick.exe"}
+            )  # replace filepath to imagemagick binary
             # Load the videos
             vid1 = VideoFileClip(video.get_filename_as_string())
             vid2 = VideoFileClip(sample.get_filename_as_string())
@@ -29,16 +33,37 @@ class Merger:
             else:
                 trimmed_video2 = vid2
 
-            # Resize both videos to 1920x1080
-            resized_video1 = vid1.fx(resize, width=1920, height=1080)
-            resized_video2 = trimmed_video2.fx(resize, width=1920, height=1080)
-
+            # Resize videos
+            resized_video1 = vid1.fx(resize, width=1080, height=606)
+            resized_video2 = trimmed_video2.fx(resize, width=2366, height=1314)
+            # Calculate the crop parameters to keep the middle section
+            target_width, target_height = 1080, 1314
+            crop_x_center = resized_video2.size[0] / 2
+            crop_y_center = resized_video2.size[1] / 2
+            # Crop the video from the center
+            cropped_video2 = resized_video2.fx(
+                crop, x_center=crop_x_center, y_center=crop_y_center, width=target_width, height=target_height
+            )
             # Mute video2
-            muted_video2 = resized_video2.fx(audio_fadein, 0.01)
+            muted_video2 = cropped_video2.fx(audio_fadein, 0.01)
             muted_video2 = muted_video2.volumex(0)
 
-            # Concatenate the videos vertically
-            final_video = clips_array([[resized_video1], [muted_video2]])
+            if isinstance(video, SplitVideo):
+                # Create a TextClip with the caption for one frame
+                caption_text = f'{video.get_title()} part {video.get_part()}'
+                fontsize = 90
+                lines = self.split_text_lines(caption_text, fontsize, resized_video1.size[0])
+                caption_clip = TextClip(
+                    lines, font='Komika-Axis', fontsize=fontsize, color='white', stroke_color='black', stroke_width=8
+                )
+                caption_clip = caption_clip.set_duration(1)  # Display for 1 second
+                caption_clip = caption_clip.set_position((0, 606))
+
+            # Position video1 in the top half, and video2 in the bottom half
+            final_video = CompositeVideoClip(
+                [resized_video1.set_position((0, 0)), muted_video2.set_position(('center', 606))], size=(1080, 1920)
+            )
+            final_video = CompositeVideoClip([final_video, caption_clip], size=(1080, 1920))
 
             # Write the final video to the output path
             merged_title = video.get_title() + " " + sample.get_title()
@@ -64,3 +89,21 @@ class Merger:
             video.get_raw_description(),
             video1_duration,
         )
+
+    def split_text_lines(self, text, fontsize, max_width):
+        # Split the text into lines that fit within the specified width
+        lines = []
+        line = ""
+        for word in text.split():
+            temp_line = line + " " + word if line else word
+            temp_clip = TextClip(
+                temp_line, font='Komika-Axis', fontsize=fontsize, color='white', stroke_color='black', stroke_width=4
+            )
+            if temp_clip.size[0] > max_width:
+                lines.append(line)
+                line = word
+            else:
+                line = temp_line
+        if line:
+            lines.append(line)
+        return '\n'.join(lines)
